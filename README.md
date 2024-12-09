@@ -15,4 +15,4 @@ This project integrates both software and hardware components:
 ## System Overview
 Here’s a high-level diagram of how the system works:
 
-![System Overview](images/system-overview.png)
+![System Overview](https://github.com/liquiir97/GatesForRunning/blob/main/images/arch.png)
