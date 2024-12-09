@@ -1,0 +1,179 @@
+
+<div class="container justify-content-end">
+    <div class="row justify-content-end">
+      <div class="col justify-content-end">
+        <h3>Welcome to testing</h3>
+      </div>
+      
+    </div>
+</div>
+
+<div class="container">
+    <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              Select user for testing
+            </button>
+          </h2>
+          <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <div class="list-group">
+                    <div *ngFor="let user of user_list" style="border-bottom: solid  #d9e7ec;" class="userLabel">
+                        <div  (click)="chooseUser(user.id)">
+                            <label style="font-size: medium; font-style: italic;">{{user.name}}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    
+    <div class="col mx-auto p-3" style="font-size: medium;">
+        <label *ngIf="selectedUser === null">Please select user!</label>
+        <label *ngIf="selectedUser !== null">Selected user: <b><i>{{selectedUser.name}}</i></b> </label>
+    </div>
+    <div *ngIf="selectedUser !== null">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="new-testing-tab" data-bs-toggle="tab" data-bs-target="#new-testing-tab-pane" type="button" role="tab" aria-controls="new-testing-tab-pane" [disabled]="!userIsSelected" (click)="newTestingCard()">New testing</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history-tab-pane" type="button" role="tab" aria-controls="history-tab-pane" aria-selected="false" [disabled]="!userIsSelected" (click)="historyTestingCard()">Testing history</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active mt-4" id="new-testing-tab-pane" role="tabpanel" aria-labelledby="new-testing-tab" tabindex="0">
+                <button type="button" class="btn btn-primary" (click)="callFlask()">Connect client for testing</button>
+                <div class="col mt-3" *ngIf="response == null">
+                    <div class="alert alert-light" role="alert">
+                        Client is not connected!
+                    </div>
+                </div>
+                <div *ngIf="response">
+                    <div class="alert alert-success mt-3" role="alert">
+                       {{response}}
+                    </div>  
+                </div>
+                <div class="result mt-4">
+                    <div class="row">
+                        <div class="col-auto" *ngIf="!sessionInProcess">
+                            <button type="button" class="btn btn-primary" (click)="startNewSession(selectedUser!.id)">Start testing</button>
+                        </div>
+                        <div class="col-auto" *ngIf="!sessionInProcess">
+                            <label class="me-2" style="font-size: small;"><i>Session:</i></label>
+                            <input  type="number" [(ngModel)]="sesija">
+                        </div>
+                        <div class="col-auto" *ngIf="sessionInProcess">
+                            <button type="button" class="btn btn-primary" (click)="endNewSession(selectedUser!.id)">Finish testing</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Testing is in process section, reading data on sensors -->
+                <div class="row mt-3" *ngIf="sessionInProcess">
+                    <div class="col-auto">
+                        Testing is in proggress...
+                    </div>
+                    <div class="col-auto">
+                        <div class="spinner-border text-danger" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Testing result section -->
+            <div *ngIf="gatePass.length != 0">
+                <div *ngFor="let uDate of uniqueDates; let i = index">
+                    <h2>Testing for date:<i> {{formatDateWithoutTime(uDate)}}</i></h2>
+                    <div *ngFor="let session of uniqueSession">
+                        <div class="row">
+            
+                        <div class="col">
+                        <h3>Session: {{session}}</h3>
+                        <div *ngFor=" let gate of gatePass">
+                            <div *ngIf="uDate == gate.datum_testiranja && session == gate.sesija">
+                                <label>Gate: {{gate.message}}</label>
+                                &nbsp; &nbsp;
+                                <label>Pass: {{formatDate(gate.date_time_pass)}}</label>
+                                &nbsp; &nbsp;
+                                <!-- <label>Datum testiranja: {{formatDate(gate.datum_testiranja)}}</label>
+                                &nbsp; &nbsp;
+                                <label>Sesija: {{gate.sesija}}</label> -->
+                            </div>
+                        </div>
+                        <h5>Razlika izmedju kapija</h5>
+                        <div *ngFor=" let gateD of gateDifference">
+                            <div *ngIf="uDate == gateD.dateTesting && session == gateD.session">
+                                <label>Gate: {{gateD.gate}}</label>
+                                &nbsp; &nbsp;
+                                <label>Difference: {{gateD.difference}}</label>
+                                &nbsp; &nbsp;
+                            </div>
+                        </div>
+                        </div>
+                        <!-- Button trigger modal -->
+                        <div class="col"><button (click)="createChart(i, uDate, session)">Show chart</button>
+                        <div>
+                            <canvas #testingChart></canvas>
+                        </div></div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <!-- chart section -->
+            <div>
+                <canvas #chartAfterTesting></canvas>
+             </div>
+            </div>
+            
+            <div class="tab-pane fade" id="history-tab-pane" role="tabpanel" aria-labelledby="history-tab" tabindex="0">
+                <!-- show hisotry data section for second card -->
+                <div class="col mt-3" style="font-size: medium;">
+                    <button *ngIf="showHistoryButton" type="button" class="btn btn-primary" (click)="getGatePassDataHistory(selectedUser!.id)">Show history data</button>
+                </div>
+                <div *ngIf="gatePass.length != 0">
+                    <div *ngFor="let uDate of uniqueDates; let i = index" style="border-bottom: solid  #d9e7ec;">
+                        <div class="col mt-2">
+                            <h3>Testing for date: <i>{{formatDateWithoutTime(uDate)}}</i></h3>
+                        </div>
+                        <div *ngFor="let session of uniqueSession">
+                            <div class="row">
+                                <div class="col">
+                                    <h3>Session: {{session}}</h3>
+                                    <div *ngFor=" let gate of gatePass">
+                                        <div *ngIf="uDate == gate.datum_testiranja && session == gate.sesija">
+                                            <label>Gate: {{gate.message}}</label>
+                                            &nbsp; &nbsp;
+                                            <label>Pass: {{formatDate(gate.date_time_pass)}}</label>
+                                            &nbsp; &nbsp;
+                                        </div>
+                                    </div>
+                                    <h5>Difference between gates</h5>
+                                    <div *ngFor=" let gateD of gateDifference">
+                                        <div *ngIf="uDate == gateD.dateTesting && session == gateD.session">
+                                            <label>Gate: {{gateD.gate}}</label>
+                                            &nbsp; &nbsp;
+                                            <label>Difference: {{gateD.difference}}</label>
+                                            &nbsp; &nbsp;
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Button trigger modal -->
+                                <div class="col"><button type="button" class="btn btn-primary" (click)="createChartHistory(i, uDate, session)">Show chart</button>
+                                    <div>
+                                        <canvas #historyChart></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- chart part for hisotry -->
+                <div>
+                    <canvas #chartHistory></canvas>
+                 </div>
+            </div>
+        </div>
+    </div>
+</div>

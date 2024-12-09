@@ -1,0 +1,17 @@
+canvas {
+    width: 100%;  // Make the chart responsive
+    height: 200px;  // Set a fixed height for the chart
+  }
+
+*{
+  font-family : Arial, Helvetica, sans-serif;
+}
+
+.userLabel:hover
+{
+  background-color: #d1e1e6;
+}
+$enable-negative-margins: true;
+.mt-n1 {
+  margin-top: -9rem !important;
+}
