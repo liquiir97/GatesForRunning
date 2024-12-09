@@ -10,3 +10,9 @@ This project integrates both software and hardware components:
 - **Backend**: The backend is developed using Flask, which powers the client application's API.
 - **Motion Detection**: A Raspberry Pi Pico W is used for motion detection. It runs **MicroPython** and acts as a sensor to detect when a player passes through gates.
 - **Main Server**: The main server is built with Python and handles communication between the sensors (Raspberry Pi Pico W) and the UI. It also manages the testing process and stores the results.
+
+
+## System Overview
+Here’s a high-level diagram of how the system works:
+
+![System Overview](images/system-overview.png)
