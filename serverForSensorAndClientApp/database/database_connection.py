@@ -1,13 +1,19 @@
-from datetime import datetime
-
 import mysql.connector
+from dotenv import load_dotenv
 from mysql.connector import Error
-from datetime import datetime
+import os
 
+load_dotenv()
 
-def connecttion_to_database(host, user, password, database):
+def connect_to_database():
+
+    db_host = os.getenv("database_host")
+    db_port = os.getenv("database_port")
+    db_user = os.getenv("database_user")
+    db_pass = os.getenv("database_pass")
+    database = 'footballanalytics'
     try:
-        databse_connection = mysql.connector.connect(host=host, user=user, password = password, database=database)
+        databse_connection = mysql.connector.connect(host=db_host, user=db_user, password=db_pass, database=database)
 
         if databse_connection.is_connected():
             print("Successfully connected to the database.")
@@ -16,7 +22,6 @@ def connecttion_to_database(host, user, password, database):
         print(f"Error while connecting to MySQL: {e}")
 
     return None
-
 
 def close_database_connection(database_connection):
     if database_connection and database_connection.is_connected():
